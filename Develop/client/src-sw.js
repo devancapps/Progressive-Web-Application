@@ -14,17 +14,38 @@ const pageCache = new CacheFirst({
       statuses: [0, 200],
     }),
     new ExpirationPlugin({
-      maxAgeSeconds: 30 * 24 * 60 * 60,
+      maxAgeSeconds: 30 * 24 * 60 * 60, 
     }),
   ],
 });
+
 
 warmStrategyCache({
   urls: ['/index.html', '/'],
   strategy: pageCache,
 });
 
+
 registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 
-// TODO: Implement asset caching
-registerRoute();
+registerRoute(
+  ({ request }) => request.destination === 'image' || 
+                   request.destination === 'style' || 
+                   request.destination === 'script',
+  new CacheFirst({
+    cacheName: 'asset-cache',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxAgeSeconds: 60 * 24 * 60 * 60,
+        maxEntries: 50,
+      }),
+    ],
+  })
+);
+
+offlineFallback({
+  pageFallback: '/index.html',
+});
