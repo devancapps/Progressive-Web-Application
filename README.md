@@ -1,5 +1,7 @@
 # Text-Editor
 
+![MIT License](https://img.shields.io/badge/license-MIT-green.svg)
+
 A simple, progressive web application for note-taking and text editing with offline capabilities and markdown support.
 
 ## Quick Start
